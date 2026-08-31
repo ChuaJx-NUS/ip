@@ -7,6 +7,7 @@ public class BigBrother {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);   // To track inputs
         String[] tasks = new String[100];           // Store user inputs
+        boolean[] taskDone = new boolean[100];      // Track completed tasks
         int taskCount = 0;
         String banner = "______ _      ______           _   _\n"
                         + "| ___ (_)     | ___ \\         | | | |\n"
@@ -37,9 +38,17 @@ public class BigBrother {
 
             //Check inputs in List
             if (command.equals("list")) {
+                System.out.println("     Here are the tasks in your list:");
                 for (int i = 0; i < taskCount; i++) {
-                    System.out.println("     " + (i + 1) + ". " + tasks[i]);
+                    String statusIcon = taskDone[i] ? "X" : " ";
+                    System.out.println("     " + (i + 1) + ".[" + statusIcon + "] " + tasks[i]);
                 }
+            } else if (command.startsWith("mark ")) {
+                int taskNumber = Integer.parseInt(command.substring(5));
+                int taskIndex = taskNumber - 1;
+                taskDone[taskIndex] = true;
+                System.out.println("     Nice! I've marked this task as done:");
+                System.out.println("       [X] " + tasks[taskIndex]);
             } else {
                 tasks[taskCount] = command;
                 taskCount++;
