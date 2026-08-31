@@ -5,7 +5,9 @@ import java.util.Scanner;
  */
 public class BigBrother {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);   // To track inputs
+        String[] tasks = new String[100];           // Store user inputs
+        int taskCount = 0;
         String banner = "______ _      ______           _   _\n"
                         + "| ___ (_)     | ___ \\         | | | |\n"
                         + "| |_/ /_  __ _| |_/ /_ __ ___ | |_| |__   ___ _ __\n"
@@ -26,13 +28,24 @@ public class BigBrother {
             String command = scanner.nextLine();
             System.out.println("____________________________________________________________");
 
+            // Bye checker
             if (command.equals("bye")) {
                 System.out.println("Bye. Hope to see you again soon!");
                 System.out.println("____________________________________________________________");
                 break;
             }
 
-            System.out.println("     " + command);
+            //Check inputs in List
+            if (command.equals("list")) {
+                for (int i = 0; i < taskCount; i++) {
+                    System.out.println("     " + (i + 1) + ". " + tasks[i]);
+                }
+            } else {
+                tasks[taskCount] = command;
+                taskCount++;
+                System.out.println("     added: " + command);
+            }
+
             System.out.println("____________________________________________________________");
         }
     }
