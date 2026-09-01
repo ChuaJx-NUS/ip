@@ -12,6 +12,7 @@ public class BigBrother {
     private static final String COMMAND_LIST = "list";
     private static final String COMMAND_MARK = "mark ";
     private static final String COMMAND_UNMARK = "unmark ";
+    private static final String COMMAND_DEADLINE = "deadline ";
     private static final String BANNER = "______ _      ______           _   _\n"
             + "| ___ (_)     | ___ \\         | | | |\n"
             + "| |_/ /_  __ _| |_/ /_ __ ___ | |_| |__   ___ _ __\n"
@@ -46,8 +47,7 @@ public class BigBrother {
             if (command.equals(COMMAND_LIST)) {
                 System.out.println("     Here are the tasks in your list:");
                 for (int i = 0; i < taskCount; i++) {
-                    String taskOutput = "     " + (i + 1) + ".[" + tasks[i].getStatusIcon()
-                            + "] " + tasks[i].getDescription();
+                    String taskOutput = "     " + (i + 1) + "." + tasks[i];
                     System.out.println(taskOutput);
                 }
             } else if (command.startsWith(COMMAND_MARK)) {
@@ -55,13 +55,23 @@ public class BigBrother {
                 int taskIndex = taskNumber - 1;
                 tasks[taskIndex].markAsDone();
                 System.out.println("     Nice! I've marked this task as done:");
-                System.out.println("       [X] " + tasks[taskIndex].getDescription());
+                System.out.println("       " + tasks[taskIndex]);
             } else if (command.startsWith(COMMAND_UNMARK)) {
                 int taskNumber = Integer.parseInt(command.substring(COMMAND_UNMARK.length()));
                 int taskIndex = taskNumber - 1;
                 tasks[taskIndex].markAsUndone();
                 System.out.println("     I've marked this task as not done:");
-                System.out.println("       [ ] " + tasks[taskIndex].getDescription());
+                System.out.println("       " + tasks[taskIndex]);
+            } else if (command.startsWith(COMMAND_DEADLINE)) {
+                String input = command.substring(COMMAND_DEADLINE.length());
+                String[] parts = input.split(" /by ", 2);
+
+                tasks[taskCount] = new Deadline(parts[0], parts[1]);
+                taskCount++;
+
+                System.out.println("     Understood Creating Task:");
+                System.out.println("       " + tasks[taskCount - 1]);
+                System.out.println("     Now you have " + taskCount + " tasks in the list.");
             } else {
                 tasks[taskCount] = new Task(command);
                 taskCount++;
