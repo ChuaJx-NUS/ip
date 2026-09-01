@@ -41,3 +41,12 @@ Do not commit or push unless explicitly asked.
 
 All future commits in this project must follow the [SE-EDU Git conventions](https://se-education.org/guides/conventions/git.html).
 Use `.codex/skills/seedu-git-standard/SKILL.md` as the mandatory checklist when creating commit messages or branch names. Commit subjects must be imperative, capitalized, period-free, and no longer than 72 characters; non-trivial commits must include a 72-column body explaining what and why.
+
+# Mandatory UI testing workflow
+
+After each code update:
+
+1. Update `test/ui-test-plan.md` if the user-visible behavior or test coverage changed.
+2. Invoke the project-specific `$test-ui` skill to run the listed UI tests.
+
+The `$test-ui` skill must show each test's console input and output and stop at the first failed test, reporting the expected and actual output.
