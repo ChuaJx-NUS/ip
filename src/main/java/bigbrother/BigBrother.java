@@ -2,6 +2,12 @@ package bigbrother;
 
 import java.util.Scanner;
 
+import bigbrother.exception.BigBrotherException;
+import bigbrother.task.Deadline;
+import bigbrother.task.Event;
+import bigbrother.task.Task;
+import bigbrother.task.ToDo;
+
 /**
  * Runs the BigBrother chatbot.
  */
@@ -331,8 +337,6 @@ public class BigBrother {
         return command.equals(commandName) || command.startsWith(commandName + " ");
     }
 
-
-    // Initialisation - Welcome Message Method
     private static void printWelcomeMessage() {
         System.out.println(SEPARATOR);
         System.out.println(BANNER);

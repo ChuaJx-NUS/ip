@@ -1,4 +1,4 @@
-package bigbrother;
+package bigbrother.task;
 
 /**
  * Represents a task in BigBrother's task list.
