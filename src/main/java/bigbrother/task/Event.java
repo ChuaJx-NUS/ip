@@ -1,4 +1,4 @@
-package bigbrother;
+package bigbrother.task;
 
 /**
  * Represents a task that takes place during a specified time range.

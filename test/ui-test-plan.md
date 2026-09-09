@@ -22,7 +22,7 @@ bye
 ### Expected output
 
 ```text
-     OOPS!!! I don't recognize that command. Try todo, deadline, event, list, mark, unmark, or bye.
+     ERROR!!! Invalid command. Try todo, deadline, event, list, mark, unmark, or bye.
      Here are the tasks in your list:
 ```
 
@@ -93,7 +93,7 @@ bye
 ### Expected output
 
 ```text
-     OOPS!!! A deadline must use: deadline <description> /by <date or time>.
+     ERROR!!! A deadline must use: deadline <description> /by <date or time>.
      Here are the tasks in your list:
 ```
 
@@ -140,7 +140,7 @@ bye
 ### Expected output
 
 ```text
-     OOPS!!! An event must use: event <description> /from <start> /to <end>.
+     ERROR!!! An event must use: event <description> /from <start> /to <end>.
      Here are the tasks in your list:
 ```
 
@@ -164,9 +164,9 @@ bye
 ### Expected output
 
 ```text
-     OOPS!!! The description of a todo cannot be empty.
-     OOPS!!! The description of a deadline cannot be empty.
-     OOPS!!! The description of an event cannot be empty.
+     ERROR!!!      ERROR - Empty Todo task.
+     ERROR!!! ERROR - Empty Deadline Task.
+     ERROR!!! The description of an event cannot be empty.
      Here are the tasks in your list:
 ```
 
@@ -189,9 +189,9 @@ bye
 ### Expected output
 
 ```text
-     OOPS!!! A deadline must include a date or time after /by.
-     OOPS!!! An event must include a start time after /from.
-     OOPS!!! An event must include an end time after /to.
+     ERROR!!! A deadline must include a date or time after /by.
+     ERROR!!! An event must include a start time after /from.
+     ERROR!!! An event must include an end time after /to.
      Here are the tasks in your list:
 ```
 
@@ -220,10 +220,10 @@ bye
      Understood Creating Task:
        [T][ ] borrow book
      Now you have 1 tasks in the list.
-     OOPS!!! Please provide a task number after mark.
-     OOPS!!! The task number must be a whole number.
-     OOPS!!! Task 0 does not exist. Choose a number from the list.
-     OOPS!!! Task 2 does not exist. Choose a number from the list.
+     ERROR!!! Please provide a task number after mark.
+     ERROR!!! The task number must be a whole number.
+     ERROR!!! Task 0 does not exist. Choose a number from the list.
+     ERROR!!! Task 2 does not exist. Choose a number from the list.
      Here are the tasks in your list:
      1.[T][ ] borrow book
 ```

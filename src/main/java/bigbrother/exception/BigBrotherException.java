@@ -1,4 +1,4 @@
-package bigbrother;
+package bigbrother.exception;
 
 /**
  * Represents an error caused by an invalid command given to BigBrother.
