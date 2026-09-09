@@ -5,16 +5,16 @@ BigBrother. Inputs are sent one command per line. Expected output entries below
 are the important task-response lines from the console transcript; startup and
 separator lines are also captured and shown when the tests are run.
 
-## Test 1: Add a generic task
+## Test 1: Reject an unknown command
 
 ### Aim
 
-Verify that an unrecognized command is stored as a generic task.
+Verify that an unrecognized command reports a helpful error and is not stored.
 
 ### Input
 
 ```text
-chicken
+blah
 list
 bye
 ```
@@ -22,8 +22,8 @@ bye
 ### Expected output
 
 ```text
-     added: chicken
-     1.[?][ ] chicken
+     OOPS!!! I don't recognize that command. Try todo, deadline, event, list, mark, unmark, or bye.
+     Here are the tasks in your list:
 ```
 
 ## Test 2: Add a todo task
@@ -93,7 +93,7 @@ bye
 ### Expected output
 
 ```text
-     Invalid deadline format. Please use: deadline <description> /by <date or time>
+     OOPS!!! A deadline must use: deadline <description> /by <date or time>.
      Here are the tasks in your list:
 ```
 
@@ -140,11 +140,95 @@ bye
 ### Expected output
 
 ```text
-     Invalid event format. Please use: event <description> /from <start> /to <end>
+     OOPS!!! An event must use: event <description> /from <start> /to <end>.
      Here are the tasks in your list:
 ```
 
-## Test 7: Mark and unmark a typed task
+## Test 7: Reject empty task descriptions
+
+### Aim
+
+Verify that todo, deadline, and event commands require descriptions and do not
+add tasks when their descriptions are empty.
+
+### Input
+
+```text
+todo
+deadline /by Friday
+event /from 2pm /to 4pm
+list
+bye
+```
+
+### Expected output
+
+```text
+     OOPS!!! The description of a todo cannot be empty.
+     OOPS!!! The description of a deadline cannot be empty.
+     OOPS!!! The description of an event cannot be empty.
+     Here are the tasks in your list:
+```
+
+## Test 8: Reject missing deadline and event times
+
+### Aim
+
+Verify that deadline and event commands explain which required time is missing.
+
+### Input
+
+```text
+deadline submit report /by
+event meeting /from
+event meeting /from 2pm /to
+list
+bye
+```
+
+### Expected output
+
+```text
+     OOPS!!! A deadline must include a date or time after /by.
+     OOPS!!! An event must include a start time after /from.
+     OOPS!!! An event must include an end time after /to.
+     Here are the tasks in your list:
+```
+
+## Test 9: Reject invalid task numbers
+
+### Aim
+
+Verify that mark and unmark commands handle missing, non-numeric, and
+out-of-range task numbers without stopping the chatbot.
+
+### Input
+
+```text
+todo borrow book
+mark
+mark one
+mark 0
+unmark 2
+list
+bye
+```
+
+### Expected output
+
+```text
+     Understood Creating Task:
+       [T][ ] borrow book
+     Now you have 1 tasks in the list.
+     OOPS!!! Please provide a task number after mark.
+     OOPS!!! The task number must be a whole number.
+     OOPS!!! Task 0 does not exist. Choose a number from the list.
+     OOPS!!! Task 2 does not exist. Choose a number from the list.
+     Here are the tasks in your list:
+     1.[T][ ] borrow book
+```
+
+## Test 10: Mark and unmark a typed task
 
 ### Aim
 
