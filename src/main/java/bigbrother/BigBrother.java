@@ -1,8 +1,10 @@
 package bigbrother;
 
+import java.nio.file.Path;
 import java.util.Scanner;
 
 import bigbrother.exception.BigBrotherException;
+import bigbrother.storage.Storage;
 import bigbrother.task.Deadline;
 import bigbrother.task.Event;
 import bigbrother.task.Task;
@@ -21,6 +23,7 @@ public class BigBrother {
     private static final String COMMAND_TODO = "todo";
     private static final String COMMAND_DEADLINE = "deadline";
     private static final String COMMAND_EVENT = "event";
+    private static final Path DATA_FILE_PATH = Path.of("data", "bigbrother.txt");
     private static final String BANNER = "______ _      ______           _   _\n"
             + "| ___ (_)     | ___ \\         | | | |\n"
             + "| |_/ /_  __ _| |_/ /_ __ ___ | |_| |__   ___ _ __\n"
@@ -39,8 +42,16 @@ public class BigBrother {
         Scanner scanner = new Scanner(System.in);
         Task[] tasks = new Task[MAX_TASKS];
         int taskCount = 0;
+        Storage storage = new Storage(DATA_FILE_PATH);
 
         printWelcomeMessage();
+
+        try {
+            taskCount = storage.loadTasks(tasks);
+        } catch (BigBrotherException exception) {
+            System.out.println("     ERROR!!! " + exception.getMessage());
+            System.out.println(SEPARATOR);
+        }
 
         while (scanner.hasNextLine()) {
             String command = scanner.nextLine();
@@ -54,6 +65,9 @@ public class BigBrother {
 
             try {
                 taskCount = processCommand(command, tasks, taskCount);
+                if (changesTaskList(command)) {
+                    storage.saveTasks(tasks, taskCount);
+                }
             } catch (BigBrotherException exception) {
                 System.out.println("     ERROR!!! " + exception.getMessage());
             }
@@ -335,6 +349,20 @@ public class BigBrother {
      */
     private static boolean matchesCommand(String command, String commandName) {
         return command.equals(commandName) || command.startsWith(commandName + " ");
+    }
+
+    /**
+     * Checks whether a successful command changes task data that must be saved.
+     *
+     * @param command the complete user input
+     * @return true if the command adds or updates a task
+     */
+    private static boolean changesTaskList(String command) {
+        return matchesCommand(command, COMMAND_MARK)
+                || matchesCommand(command, COMMAND_UNMARK)
+                || matchesCommand(command, COMMAND_TODO)
+                || matchesCommand(command, COMMAND_DEADLINE)
+                || matchesCommand(command, COMMAND_EVENT);
     }
 
     private static void printWelcomeMessage() {
