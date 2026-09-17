@@ -1,5 +1,6 @@
 package bigbrother;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import bigbrother.exception.BigBrotherException;
@@ -12,9 +13,9 @@ import bigbrother.task.ToDo;
  * Runs the BigBrother chatbot.
  */
 public class BigBrother {
-    private static final int MAX_TASKS = 100;
     private static final String SEPARATOR = "____________________________________________________________";
     private static final String COMMAND_BYE = "bye";
+    private static final String COMMAND_DELETE = "delete";
     private static final String COMMAND_LIST = "list";
     private static final String COMMAND_MARK = "mark";
     private static final String COMMAND_UNMARK = "unmark";
@@ -37,8 +38,7 @@ public class BigBrother {
      */
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        Task[] tasks = new Task[MAX_TASKS];
-        int taskCount = 0;
+        ArrayList<Task> tasks = new ArrayList<>();
 
         printWelcomeMessage();
 
@@ -53,7 +53,7 @@ public class BigBrother {
             }
 
             try {
-                taskCount = processCommand(command, tasks, taskCount);
+                processCommand(command, tasks);
             } catch (BigBrotherException exception) {
                 System.out.println("     ERROR!!! " + exception.getMessage());
             }
@@ -63,57 +63,61 @@ public class BigBrother {
     }
 
     /**
-     * Processes one non-exit command and returns the updated number of tasks.
+     * Processes one non-exit command.
      *
      * @param command the command entered by the user
      * @param tasks the current task list
-     * @param taskCount the current number of tasks
-     * @return the number of tasks after processing the command
      * @throws BigBrotherException if the command is invalid
      */
-    private static int processCommand(String command, Task[] tasks, int taskCount)
-            throws BigBrotherException {
+    private static void processCommand(String command, ArrayList<Task> tasks) throws BigBrotherException {
         if (command.equals(COMMAND_LIST)) {
-            handleListCommand(tasks, taskCount);
-            return taskCount;
+            handleListCommand(tasks);
+            return;
         }
 
         if (matchesCommand(command, COMMAND_MARK)) {
-            handleMarkCommand(command, tasks, taskCount);
-            return taskCount;
+            handleMarkCommand(command, tasks);
+            return;
         }
 
         if (matchesCommand(command, COMMAND_UNMARK)) {
-            handleUnmarkCommand(command, tasks, taskCount);
-            return taskCount;
+            handleUnmarkCommand(command, tasks);
+            return;
+        }
+
+        if (matchesCommand(command, COMMAND_DELETE)) {
+            handleDeleteCommand(command, tasks);
+            return;
         }
 
         if (matchesCommand(command, COMMAND_TODO)) {
-            return handleTodoCommand(command, tasks, taskCount);
+            handleTodoCommand(command, tasks);
+            return;
         }
 
         if (matchesCommand(command, COMMAND_DEADLINE)) {
-            return handleDeadlineCommand(command, tasks, taskCount);
+            handleDeadlineCommand(command, tasks);
+            return;
         }
 
         if (matchesCommand(command, COMMAND_EVENT)) {
-            return handleEventCommand(command, tasks, taskCount);
+            handleEventCommand(command, tasks);
+            return;
         }
 
         throw new BigBrotherException("Invalid command. Try todo, deadline, event, list, mark,"
-                + " unmark, or bye.");
+                + " unmark, delete, or bye.");
     }
 
     /**
      * Displays all tasks currently stored in the task list.
      *
      * @param tasks the current task list
-     * @param taskCount the number of tasks in the list
      */
-    private static void handleListCommand(Task[] tasks, int taskCount) {
+    private static void handleListCommand(ArrayList<Task> tasks) {
         System.out.println("     Here are the tasks in your list:");
-        for (int i = 0; i < taskCount; i++) {
-            String taskOutput = "     " + (i + 1) + "." + tasks[i];
+        for (int i = 0; i < tasks.size(); i++) {
+            String taskOutput = "     " + (i + 1) + "." + tasks.get(i);
             System.out.println(taskOutput);
         }
     }
@@ -123,15 +127,13 @@ public class BigBrother {
      *
      * @param command the mark command entered by the user
      * @param tasks the current task list
-     * @param taskCount the number of tasks in the list
      * @throws BigBrotherException if the task number is missing or invalid
      */
-    private static void handleMarkCommand(String command, Task[] tasks, int taskCount)
-            throws BigBrotherException {
-        int taskIndex = getTaskIndex(command, COMMAND_MARK, taskCount);
-        tasks[taskIndex].markAsDone();
+    private static void handleMarkCommand(String command, ArrayList<Task> tasks) throws BigBrotherException {
+        int taskIndex = getTaskIndex(command, COMMAND_MARK, tasks.size());
+        tasks.get(taskIndex).markAsDone();
         System.out.println("     Nice! I've marked this task as done:");
-        System.out.println("       " + tasks[taskIndex]);
+        System.out.println("       " + tasks.get(taskIndex));
     }
 
     /**
@@ -139,15 +141,28 @@ public class BigBrother {
      *
      * @param command the unmark command entered by the user
      * @param tasks the current task list
-     * @param taskCount the number of tasks in the list
      * @throws BigBrotherException if the task number is missing or invalid
      */
-    private static void handleUnmarkCommand(String command, Task[] tasks, int taskCount)
-            throws BigBrotherException {
-        int taskIndex = getTaskIndex(command, COMMAND_UNMARK, taskCount);
-        tasks[taskIndex].markAsUndone();
+    private static void handleUnmarkCommand(String command, ArrayList<Task> tasks) throws BigBrotherException {
+        int taskIndex = getTaskIndex(command, COMMAND_UNMARK, tasks.size());
+        tasks.get(taskIndex).markAsUndone();
         System.out.println("     I've marked this task as not done:");
-        System.out.println("       " + tasks[taskIndex]);
+        System.out.println("       " + tasks.get(taskIndex));
+    }
+
+    /**
+     * Deletes the task identified by a delete command.
+     *
+     * @param command the delete command entered by the user
+     * @param tasks the current task list
+     * @throws BigBrotherException if the task number is missing or invalid
+     */
+    private static void handleDeleteCommand(String command, ArrayList<Task> tasks) throws BigBrotherException {
+        int taskIndex = getTaskIndex(command, COMMAND_DELETE, tasks.size());
+        Task removedTask = tasks.remove(taskIndex);
+        System.out.println("     Noted. I've removed this task:");
+        System.out.println("       " + removedTask);
+        System.out.println("     Now you have " + tasks.size() + " tasks in the list.");
     }
 
     /**
@@ -155,26 +170,20 @@ public class BigBrother {
      *
      * @param command the todo command entered by the user
      * @param tasks the current task list
-     * @param taskCount the current number of tasks
-     * @return the updated number of tasks
-     * @throws BigBrotherException if the description is empty or the task list is full
+     * @throws BigBrotherException if the description is empty
      */
-    private static int handleTodoCommand(String command, Task[] tasks, int taskCount)
-            throws BigBrotherException {
+    private static void handleTodoCommand(String command, ArrayList<Task> tasks) throws BigBrotherException {
         String description = command.substring(COMMAND_TODO.length()).trim();
         if (description.isEmpty()) {
             throw new BigBrotherException("     ERROR - Empty Todo task.");
         }
 
-        ensureTaskListHasSpace(tasks, taskCount);
-        int taskIndex = taskCount;
-        tasks[taskIndex] = new ToDo(description);
-        int updatedTaskCount = taskCount + 1;
+        Task task = new ToDo(description);
+        tasks.add(task);
 
         System.out.println("     Understood Creating Task:");
-        System.out.println("       " + tasks[taskIndex]);
-        System.out.println("     Now you have " + updatedTaskCount + " tasks in the list.");
-        return updatedTaskCount;
+        System.out.println("       " + task);
+        System.out.println("     Now you have " + tasks.size() + " tasks in the list.");
     }
 
     /**
@@ -182,12 +191,9 @@ public class BigBrother {
      *
      * @param command the deadline command entered by the user
      * @param tasks the current task list
-     * @param taskCount the current number of tasks
-     * @return the updated number of tasks
-     * @throws BigBrotherException if any required deadline detail is missing or the task list is full
+     * @throws BigBrotherException if any required deadline detail is missing
      */
-    private static int handleDeadlineCommand(String command, Task[] tasks, int taskCount)
-            throws BigBrotherException {
+    private static void handleDeadlineCommand(String command, ArrayList<Task> tasks) throws BigBrotherException {
         String input = command.substring(COMMAND_DEADLINE.length()).trim();
         if (input.isEmpty() || input.equals("/by") || input.startsWith("/by ")) {
             throw new BigBrotherException("ERROR - Empty Deadline Task.");
@@ -211,15 +217,12 @@ public class BigBrother {
             throw new BigBrotherException("A deadline must include a date or time after /by.");
         }
 
-        ensureTaskListHasSpace(tasks, taskCount);
-        int taskIndex = taskCount;
-        tasks[taskIndex] = new Deadline(description, by);
-        int updatedTaskCount = taskCount + 1;
+        Task task = new Deadline(description, by);
+        tasks.add(task);
 
         System.out.println("     Understood Creating Task with Deadline:");
-        System.out.println("       " + tasks[taskIndex]);
-        System.out.println("     Now you have " + updatedTaskCount + " tasks in the list.");
-        return updatedTaskCount;
+        System.out.println("       " + task);
+        System.out.println("     Now you have " + tasks.size() + " tasks in the list.");
     }
 
     /**
@@ -227,12 +230,9 @@ public class BigBrother {
      *
      * @param command the event command entered by the user
      * @param tasks the current task list
-     * @param taskCount the current number of tasks
-     * @return the updated number of tasks
-     * @throws BigBrotherException if any required event detail is missing or the task list is full
+     * @throws BigBrotherException if any required event detail is missing
      */
-    private static int handleEventCommand(String command, Task[] tasks, int taskCount)
-            throws BigBrotherException {
+    private static void handleEventCommand(String command, ArrayList<Task> tasks) throws BigBrotherException {
         String input = command.substring(COMMAND_EVENT.length()).trim();
         if (input.isEmpty() || input.equals("/from") || input.startsWith("/from ")) {
             throw new BigBrotherException("The description of an event cannot be empty.");
@@ -273,21 +273,18 @@ public class BigBrother {
             throw new BigBrotherException("An event must include an end time after /to.");
         }
 
-        ensureTaskListHasSpace(tasks, taskCount);
-        int taskIndex = taskCount;
-        tasks[taskIndex] = new Event(description, from, to);
-        int updatedTaskCount = taskCount + 1;
+        Task task = new Event(description, from, to);
+        tasks.add(task);
 
         System.out.println("     Understood Created Event task:");
-        System.out.println("       " + tasks[taskIndex]);
-        System.out.println("     Now you have " + updatedTaskCount + " tasks in the list.");
-        return updatedTaskCount;
+        System.out.println("       " + task);
+        System.out.println("     Now you have " + tasks.size() + " tasks in the list.");
     }
 
     /**
-     * Converts the task number in a mark or unmark command into an array index.
+     * Converts the task number in a task-selection command into a list index.
      *
-     * @param command the mark or unmark command entered by the user
+     * @param command the task-selection command entered by the user
      * @param commandPrefix the prefix to remove from the command
      * @param taskCount the number of tasks in the list
      * @return the zero-based index of the selected task
@@ -311,19 +308,6 @@ public class BigBrother {
             throw new BigBrotherException("Task " + taskNumber + " does not exist. Choose a number from the list.");
         }
         return taskNumber - 1;
-    }
-
-    /**
-     * Checks whether the task list has room for another task.
-     *
-     * @param tasks the current task list
-     * @param taskCount the number of tasks in the list
-     * @throws BigBrotherException if the task list has reached its capacity
-     */
-    private static void ensureTaskListHasSpace(Task[] tasks, int taskCount) throws BigBrotherException {
-        if (taskCount >= tasks.length) {
-            throw new BigBrotherException("The task list is full.");
-        }
     }
 
     /**
