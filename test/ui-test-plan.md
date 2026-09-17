@@ -1,10 +1,14 @@
 # Console UI Test Plan
 
-This plan covers the user-visible task creation, modification, deletion, and
-display behavior of BigBrother. Inputs are sent one command per line. Expected
-output entries below are the important task-response lines from the console
-transcript; startup and separator lines are also captured and shown when the
-tests are run.
+This plan covers the user-visible task creation, modification, deletion,
+display, and persistence behavior of BigBrother. Inputs are sent one command
+per line. Expected output entries below are the important task-response lines
+from the console transcript; startup and separator lines are also captured and
+shown when the tests are run.
+
+Unless a test states otherwise, run it from a fresh temporary working directory
+that does not contain a `data` folder. This keeps saved tasks from one test from
+affecting another test.
 
 ## Test 1: Reject an unknown command
 
@@ -336,4 +340,107 @@ bye
      ERROR!!! Task 2 does not exist. Choose a number from the list.
      Here are the tasks in your list:
      1.[T][ ] borrow book
+```
+
+## Test 13: Save, load, and delete tasks across restarts
+
+### Aim
+
+Verify that adding, marking, and deleting tasks saves all changes, and that new
+BigBrother processes load them from `data/bigbrother.txt`. Run all sessions from
+the same fresh temporary working directory.
+
+### First session input
+
+```text
+todo borrow book
+deadline return book /by Friday
+event project meeting /from Mon 2pm /to 4pm
+mark 2
+bye
+```
+
+### First session expected output
+
+```text
+     Understood Creating Task:
+       [T][ ] borrow book
+     Now you have 1 tasks in the list.
+     Understood Creating Task with Deadline:
+       [D][ ] return book (by: Friday)
+     Now you have 2 tasks in the list.
+     Understood Created Event task:
+       [E][ ] project meeting (from: Mon 2pm to: 4pm)
+     Now you have 3 tasks in the list.
+     Nice! I've marked this task as done:
+       [D][X] return book (by: Friday)
+```
+
+### Expected saved file
+
+```text
+T | 0 | borrow book
+D | 1 | return book | Friday
+E | 0 | project meeting | Mon 2pm | 4pm
+```
+
+### Second session input
+
+```text
+list
+delete 1
+bye
+```
+
+### Second session expected output
+
+```text
+     Here are the tasks in your list:
+     1.[T][ ] borrow book
+     2.[D][X] return book (by: Friday)
+     3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+     Noted. I've removed this task:
+       [T][ ] borrow book
+     Now you have 2 tasks in the list.
+```
+
+### Third session input
+
+```text
+list
+bye
+```
+
+### Third session expected output
+
+```text
+     Here are the tasks in your list:
+     1.[D][X] return book (by: Friday)
+     2.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+```
+
+## Test 14: Handle a corrupted data file
+
+### Aim
+
+Verify that BigBrother reports a clear error instead of crashing when the saved
+file contains an invalid task. Before starting the program, create
+`data/bigbrother.txt` with the following content:
+
+```text
+T | invalid-status | damaged task
+```
+
+### Input
+
+```text
+list
+bye
+```
+
+### Expected output
+
+```text
+     ERROR!!! The data file is corrupted at line 1. Starting with no tasks.
+     Here are the tasks in your list:
 ```
