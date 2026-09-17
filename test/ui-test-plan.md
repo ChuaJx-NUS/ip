@@ -1,9 +1,10 @@
 # Console UI Test Plan
 
-This plan covers the user-visible task creation and display behavior of
-BigBrother. Inputs are sent one command per line. Expected output entries below
-are the important task-response lines from the console transcript; startup and
-separator lines are also captured and shown when the tests are run.
+This plan covers the user-visible task creation, modification, deletion, and
+display behavior of BigBrother. Inputs are sent one command per line. Expected
+output entries below are the important task-response lines from the console
+transcript; startup and separator lines are also captured and shown when the
+tests are run.
 
 ## Test 1: Reject an unknown command
 
@@ -22,7 +23,7 @@ bye
 ### Expected output
 
 ```text
-     ERROR!!! Invalid command. Try todo, deadline, event, list, mark, unmark, or bye.
+     ERROR!!! Invalid command. Try todo, deadline, event, list, mark, unmark, delete, or bye.
      Here are the tasks in your list:
 ```
 
@@ -254,4 +255,85 @@ bye
        [E][X] project meeting (from: Mon 2pm to: 4pm)
      I've marked this task as not done:
        [E][ ] project meeting (from: Mon 2pm to: 4pm)
+```
+
+## Test 11: Delete a task
+
+### Aim
+
+Verify that deleting a task displays the removed task, updates the task count,
+and renumbers the remaining tasks.
+
+### Input
+
+```text
+todo read book
+deadline return book /by June 6th
+event project meeting /from Aug 6th 2pm /to 4pm
+todo join sports club
+todo borrow book
+delete 3
+list
+bye
+```
+
+### Expected output
+
+```text
+     Understood Creating Task:
+       [T][ ] read book
+     Now you have 1 tasks in the list.
+     Understood Creating Task with Deadline:
+       [D][ ] return book (by: June 6th)
+     Now you have 2 tasks in the list.
+     Understood Created Event task:
+       [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+     Now you have 3 tasks in the list.
+     Understood Creating Task:
+       [T][ ] join sports club
+     Now you have 4 tasks in the list.
+     Understood Creating Task:
+       [T][ ] borrow book
+     Now you have 5 tasks in the list.
+     Noted. I've removed this task:
+       [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+     Now you have 4 tasks in the list.
+     Here are the tasks in your list:
+     1.[T][ ] read book
+     2.[D][ ] return book (by: June 6th)
+     3.[T][ ] join sports club
+     4.[T][ ] borrow book
+```
+
+## Test 12: Reject invalid delete task numbers
+
+### Aim
+
+Verify that delete commands handle missing, non-numeric, and out-of-range task
+numbers without removing a valid task or stopping the chatbot.
+
+### Input
+
+```text
+todo borrow book
+delete
+delete one
+delete 0
+delete 2
+list
+bye
+```
+
+### Expected output
+
+```text
+     Understood Creating Task:
+       [T][ ] borrow book
+     Now you have 1 tasks in the list.
+     ERROR!!! Please provide a task number after delete.
+     ERROR!!! The task number must be a whole number.
+     ERROR!!! Task 0 does not exist. Choose a number from the list.
+     ERROR!!! Task 2 does not exist. Choose a number from the list.
+     Here are the tasks in your list:
+     1.[T][ ] borrow book
 ```
