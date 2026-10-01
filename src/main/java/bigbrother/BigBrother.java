@@ -2,7 +2,6 @@ package bigbrother;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 import bigbrother.exception.BigBrotherException;
 import bigbrother.storage.Storage;
@@ -10,12 +9,12 @@ import bigbrother.task.Deadline;
 import bigbrother.task.Event;
 import bigbrother.task.Task;
 import bigbrother.task.ToDo;
+import bigbrother.ui.Ui;
 
 /**
  * Runs the BigBrother chatbot.
  */
 public class BigBrother {
-    private static final String SEPARATOR = "____________________________________________________________";
     private static final String COMMAND_BYE = "bye";
     private static final String COMMAND_DELETE = "delete";
     private static final String COMMAND_LIST = "list";
@@ -25,14 +24,6 @@ public class BigBrother {
     private static final String COMMAND_DEADLINE = "deadline";
     private static final String COMMAND_EVENT = "event";
     private static final Path DATA_FILE_PATH = Path.of("data", "bigbrother.txt");
-    private static final String BANNER = "______ _      ______           _   _\n"
-            + "| ___ (_)     | ___ \\         | | | |\n"
-            + "| |_/ /_  __ _| |_/ /_ __ ___ | |_| |__   ___ _ __\n"
-            + "| ___ \\ |/ _` | ___ \\ '__/ _ \\| __| '_ \\ / _ \\ '__|\n"
-            + "| |_/ / | (_| | |_/ / | | (_) | |_| | | |  __/ |\n"
-            + "\\____/|_|\\__, \\____/|_|  \\___/ \\__|_| |_|\\___|_|\n"
-            + "          __/ |\n"
-            + "         |___/\n";
 
     /**
      * Starts BigBrother and processes commands until the user exits.
@@ -40,39 +31,39 @@ public class BigBrother {
      * @param args command-line arguments, which are not used
      */
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        Ui ui = new Ui();
         ArrayList<Task> tasks = new ArrayList<>();
         Storage storage = new Storage(DATA_FILE_PATH);
 
-        printWelcomeMessage();
+        ui.showWelcome();
 
         try {
             storage.loadTasks(tasks);
         } catch (BigBrotherException exception) {
-            System.out.println("     ERROR!!! " + exception.getMessage());
-            System.out.println(SEPARATOR);
+            ui.showError(exception.getMessage());
+            ui.showLine();
         }
 
-        while (scanner.hasNextLine()) {
-            String command = scanner.nextLine();
-            System.out.println(SEPARATOR);
+        while (ui.hasNextCommand()) {
+            String command = ui.readCommand();
+            ui.showLine();
 
             if (command.equals(COMMAND_BYE)) {
-                System.out.println("Bye. Hope to see you again soon!");
-                System.out.println(SEPARATOR);
+                ui.showGoodbye();
+                ui.showLine();
                 break;
             }
 
             try {
-                processCommand(command, tasks);
+                processCommand(command, tasks, ui);
                 if (changesTaskList(command)) {
                     storage.saveTasks(tasks);
                 }
             } catch (BigBrotherException exception) {
-                System.out.println("     ERROR!!! " + exception.getMessage());
+                ui.showError(exception.getMessage());
             }
 
-            System.out.println(SEPARATOR);
+            ui.showLine();
         }
     }
 
@@ -81,41 +72,42 @@ public class BigBrother {
      *
      * @param command the command entered by the user
      * @param tasks the current task list
+     * @param ui the user interface used to display command results
      * @throws BigBrotherException if the command is invalid
      */
-    private static void processCommand(String command, ArrayList<Task> tasks) throws BigBrotherException {
+    private static void processCommand(String command, ArrayList<Task> tasks, Ui ui) throws BigBrotherException {
         if (command.equals(COMMAND_LIST)) {
-            handleListCommand(tasks);
+            handleListCommand(tasks, ui);
             return;
         }
 
         if (matchesCommand(command, COMMAND_MARK)) {
-            handleMarkCommand(command, tasks);
+            handleMarkCommand(command, tasks, ui);
             return;
         }
 
         if (matchesCommand(command, COMMAND_UNMARK)) {
-            handleUnmarkCommand(command, tasks);
+            handleUnmarkCommand(command, tasks, ui);
             return;
         }
 
         if (matchesCommand(command, COMMAND_DELETE)) {
-            handleDeleteCommand(command, tasks);
+            handleDeleteCommand(command, tasks, ui);
             return;
         }
 
         if (matchesCommand(command, COMMAND_TODO)) {
-            handleTodoCommand(command, tasks);
+            handleTodoCommand(command, tasks, ui);
             return;
         }
 
         if (matchesCommand(command, COMMAND_DEADLINE)) {
-            handleDeadlineCommand(command, tasks);
+            handleDeadlineCommand(command, tasks, ui);
             return;
         }
 
         if (matchesCommand(command, COMMAND_EVENT)) {
-            handleEventCommand(command, tasks);
+            handleEventCommand(command, tasks, ui);
             return;
         }
 
@@ -127,13 +119,10 @@ public class BigBrother {
      * Displays all tasks currently stored in the task list.
      *
      * @param tasks the current task list
+     * @param ui the user interface used to display the task list
      */
-    private static void handleListCommand(ArrayList<Task> tasks) {
-        System.out.println("     Here are the tasks in your list:");
-        for (int i = 0; i < tasks.size(); i++) {
-            String taskOutput = "     " + (i + 1) + "." + tasks.get(i);
-            System.out.println(taskOutput);
-        }
+    private static void handleListCommand(ArrayList<Task> tasks, Ui ui) {
+        ui.showTaskList(tasks);
     }
 
     /**
@@ -141,13 +130,14 @@ public class BigBrother {
      *
      * @param command the mark command entered by the user
      * @param tasks the current task list
+     * @param ui the user interface used to display the result
      * @throws BigBrotherException if the task number is missing or invalid
      */
-    private static void handleMarkCommand(String command, ArrayList<Task> tasks) throws BigBrotherException {
+    private static void handleMarkCommand(String command, ArrayList<Task> tasks, Ui ui)
+            throws BigBrotherException {
         int taskIndex = getTaskIndex(command, COMMAND_MARK, tasks.size());
         tasks.get(taskIndex).markAsDone();
-        System.out.println("     Nice! I've marked this task as done:");
-        System.out.println("       " + tasks.get(taskIndex));
+        ui.showTaskMarked(tasks.get(taskIndex));
     }
 
     /**
@@ -155,13 +145,14 @@ public class BigBrother {
      *
      * @param command the unmark command entered by the user
      * @param tasks the current task list
+     * @param ui the user interface used to display the result
      * @throws BigBrotherException if the task number is missing or invalid
      */
-    private static void handleUnmarkCommand(String command, ArrayList<Task> tasks) throws BigBrotherException {
+    private static void handleUnmarkCommand(String command, ArrayList<Task> tasks, Ui ui)
+            throws BigBrotherException {
         int taskIndex = getTaskIndex(command, COMMAND_UNMARK, tasks.size());
         tasks.get(taskIndex).markAsUndone();
-        System.out.println("     I've marked this task as not done:");
-        System.out.println("       " + tasks.get(taskIndex));
+        ui.showTaskUnmarked(tasks.get(taskIndex));
     }
 
     /**
@@ -169,14 +160,14 @@ public class BigBrother {
      *
      * @param command the delete command entered by the user
      * @param tasks the current task list
+     * @param ui the user interface used to display the result
      * @throws BigBrotherException if the task number is missing or invalid
      */
-    private static void handleDeleteCommand(String command, ArrayList<Task> tasks) throws BigBrotherException {
+    private static void handleDeleteCommand(String command, ArrayList<Task> tasks, Ui ui)
+            throws BigBrotherException {
         int taskIndex = getTaskIndex(command, COMMAND_DELETE, tasks.size());
         Task removedTask = tasks.remove(taskIndex);
-        System.out.println("     Noted. I've removed this task:");
-        System.out.println("       " + removedTask);
-        System.out.println("     Now you have " + tasks.size() + " tasks in the list.");
+        ui.showTaskDeleted(removedTask, tasks.size());
     }
 
     /**
@@ -184,9 +175,11 @@ public class BigBrother {
      *
      * @param command the todo command entered by the user
      * @param tasks the current task list
+     * @param ui the user interface used to display the result
      * @throws BigBrotherException if the description is empty
      */
-    private static void handleTodoCommand(String command, ArrayList<Task> tasks) throws BigBrotherException {
+    private static void handleTodoCommand(String command, ArrayList<Task> tasks, Ui ui)
+            throws BigBrotherException {
         String description = command.substring(COMMAND_TODO.length()).trim();
         if (description.isEmpty()) {
             throw new BigBrotherException("     ERROR - Empty Todo task.");
@@ -195,9 +188,7 @@ public class BigBrother {
         Task task = new ToDo(description);
         tasks.add(task);
 
-        System.out.println("     Understood Creating Task:");
-        System.out.println("       " + task);
-        System.out.println("     Now you have " + tasks.size() + " tasks in the list.");
+        ui.showTodoAdded(task, tasks.size());
     }
 
     /**
@@ -205,9 +196,11 @@ public class BigBrother {
      *
      * @param command the deadline command entered by the user
      * @param tasks the current task list
+     * @param ui the user interface used to display the result
      * @throws BigBrotherException if any required deadline detail is missing
      */
-    private static void handleDeadlineCommand(String command, ArrayList<Task> tasks) throws BigBrotherException {
+    private static void handleDeadlineCommand(String command, ArrayList<Task> tasks, Ui ui)
+            throws BigBrotherException {
         String input = command.substring(COMMAND_DEADLINE.length()).trim();
         if (input.isEmpty() || input.equals("/by") || input.startsWith("/by ")) {
             throw new BigBrotherException("ERROR - Empty Deadline Task.");
@@ -234,9 +227,7 @@ public class BigBrother {
         Task task = new Deadline(description, by);
         tasks.add(task);
 
-        System.out.println("     Understood Creating Task with Deadline:");
-        System.out.println("       " + task);
-        System.out.println("     Now you have " + tasks.size() + " tasks in the list.");
+        ui.showDeadlineAdded(task, tasks.size());
     }
 
     /**
@@ -244,9 +235,11 @@ public class BigBrother {
      *
      * @param command the event command entered by the user
      * @param tasks the current task list
+     * @param ui the user interface used to display the result
      * @throws BigBrotherException if any required event detail is missing
      */
-    private static void handleEventCommand(String command, ArrayList<Task> tasks) throws BigBrotherException {
+    private static void handleEventCommand(String command, ArrayList<Task> tasks, Ui ui)
+            throws BigBrotherException {
         String input = command.substring(COMMAND_EVENT.length()).trim();
         if (input.isEmpty() || input.equals("/from") || input.startsWith("/from ")) {
             throw new BigBrotherException("The description of an event cannot be empty.");
@@ -290,9 +283,7 @@ public class BigBrother {
         Task task = new Event(description, from, to);
         tasks.add(task);
 
-        System.out.println("     Understood Created Event task:");
-        System.out.println("       " + task);
-        System.out.println("     Now you have " + tasks.size() + " tasks in the list.");
+        ui.showEventAdded(task, tasks.size());
     }
 
     /**
@@ -350,11 +341,4 @@ public class BigBrother {
                 || matchesCommand(command, COMMAND_EVENT);
     }
 
-    private static void printWelcomeMessage() {
-        System.out.println(SEPARATOR);
-        System.out.println(BANNER);
-        System.out.println("Hello! I'm BigBrother.");
-        System.out.println("What can I do for you?");
-        System.out.println(SEPARATOR);
-    }
 }
