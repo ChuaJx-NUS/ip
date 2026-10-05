@@ -87,6 +87,9 @@ public class BigBrother {
         case LIST:
             ui.showTaskList(tasks.getTasks());
             break;
+        case FIND:
+            ui.showMatchingTasks(tasks.find(Parser.parseKeyword(input)));
+            break;
         case MARK:
             ui.showTaskMarked(tasks.markAsDone(Parser.parseTaskNumber(input, commandType)));
             break;

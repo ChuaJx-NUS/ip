@@ -18,6 +18,8 @@ public class Parser {
         BYE("bye", false),
         /** Displays every task. */
         LIST("list", false),
+        /** Searches task descriptions. */
+        FIND("find", false),
         /** Marks a task as completed. */
         MARK("mark", true),
         /** Marks a task as incomplete. */
@@ -72,7 +74,7 @@ public class Parser {
                 return type;
             }
         }
-        throw new BigBrotherException("Invalid command. Try todo, deadline, event, list, mark,"
+        throw new BigBrotherException("Invalid command. Try todo, deadline, event, list, find, mark,"
                 + " unmark, delete, or bye.");
     }
 
@@ -95,6 +97,21 @@ public class Parser {
         } catch (NumberFormatException exception) {
             throw new BigBrotherException("The task number must be a whole number.");
         }
+    }
+
+    /**
+     * Reads the search keyword from a find command.
+     *
+     * @param input the complete command line
+     * @return the keyword to search for
+     * @throws BigBrotherException if the keyword is missing
+     */
+    public static String parseKeyword(String input) throws BigBrotherException {
+        String keyword = input.substring(CommandType.FIND.keyword.length()).trim();
+        if (keyword.isEmpty()) {
+            throw new BigBrotherException("Please provide a keyword after find.");
+        }
+        return keyword;
     }
 
     /**

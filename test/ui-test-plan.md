@@ -1,7 +1,7 @@
 # Console UI Test Plan
 
 This plan covers the user-visible task creation, modification, deletion,
-display, and persistence behavior of BigBrother. Inputs are sent one
+search, display, and persistence behavior of BigBrother. Inputs are sent one
 command per line. Expected output entries below are the important task-response
 lines from the console transcript; startup and separator lines are also
 captured and shown when the tests are run.
@@ -27,7 +27,7 @@ bye
 ### Expected output
 
 ```text
-     ERROR!!! Invalid command. Try todo, deadline, event, list, mark, unmark, delete, or bye.
+     ERROR!!! Invalid command. Try todo, deadline, event, list, find, mark, unmark, delete, or bye.
      Displaying list of tasks:
 ```
 
@@ -445,7 +445,68 @@ bye
      Displaying list of tasks:
 ```
 
-## Test 15: Parse, display, and reload calendar deadlines
+## Test 15: Find tasks by description
+
+### Aim
+
+Verify that `find` searches task descriptions without regard to letter case,
+numbers the matching results consecutively, and does not match deadline dates.
+
+### Input
+
+```text
+todo read book
+deadline submit report /by book launch
+event Book club /from Monday /to Tuesday
+todo return book
+find book
+bye
+```
+
+### Expected output
+
+```text
+     Understood, Creating Task:
+       [T][ ] read book
+     Now you have 1 tasks in the list.
+     Understood, Creating Task with Deadline:
+       [D][ ] submit report (by: book launch)
+     Now you have 2 tasks in the list.
+     Understood, Created Event task:
+       [E][ ] Book club (from: Monday to: Tuesday)
+     Now you have 3 tasks in the list.
+     Understood, Creating Task:
+       [T][ ] return book
+     Now you have 4 tasks in the list.
+     Displaying matched tasks in your list:
+     1.[T][ ] read book
+     2.[E][ ] Book club (from: Monday to: Tuesday)
+     3.[T][ ] return book
+```
+
+## Test 16: Handle empty and unmatched searches
+
+### Aim
+
+Verify that `find` rejects a missing keyword and displays an empty matching
+list when no task description contains the keyword.
+
+### Input
+
+```text
+find
+find missing
+bye
+```
+
+### Expected output
+
+```text
+     ERROR!!! Please provide a keyword after find.
+     Displaying matched tasks in your list:
+```
+
+## Test 17: Parse, display, and reload calendar deadlines
 
 ### Aim
 
@@ -498,7 +559,7 @@ bye
      2.[D][ ] join call (by: Oct 15 2026 6:00 PM)
 ```
 
-## Test 16: Reject invalid calendar dates and times
+## Test 18: Reject invalid calendar dates and times
 
 ### Aim
 
@@ -526,7 +587,7 @@ bye
      Displaying list of tasks:
 ```
 
-## Test 17: Handle an invalid saved calendar date
+## Test 19: Handle an invalid saved calendar date
 
 ### Aim
 
