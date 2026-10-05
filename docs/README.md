@@ -69,6 +69,22 @@ list
 The task type is shown as `[T]` (todo), `[D]` (deadline), or `[E]` (event).
 The status is `[ ]` when incomplete and `[X]` when completed.
 
+### Find tasks
+
+Displays tasks whose descriptions contain the given keyword. The search is
+case-insensitive, so `find book` also matches `Book club`.
+
+```text
+find KEYWORD
+```
+
+Example: `find book`
+
+Search results are numbered from `1` for display. To `mark`, `unmark`, or
+`delete` a result, first run `list` and use its task number.
+When nothing matches, BigBrother shows the matching-tasks heading with no
+tasks underneath it.
+
 ### Mark a task as completed
 
 Use the task number shown by `list`.
@@ -116,6 +132,7 @@ automatically before the application exits.
 | Add a deadline | `deadline DESCRIPTION /by YYYY-MM-DD[ HHmm]` |
 | Add an event | `event DESCRIPTION /from START /to END` |
 | List tasks | `list` |
+| Find tasks | `find KEYWORD` |
 | Mark completed | `mark TASK_NUMBER` |
 | Mark incomplete | `unmark TASK_NUMBER` |
 | Delete a task | `delete TASK_NUMBER` |

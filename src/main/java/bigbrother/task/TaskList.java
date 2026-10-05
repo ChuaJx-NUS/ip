@@ -2,6 +2,7 @@ package bigbrother.task;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import bigbrother.exception.BigBrotherException;
 
@@ -89,6 +90,23 @@ public class TaskList {
         Task task = tasks.get(getTaskIndex(taskNumber));
         task.markAsUndone();
         return task;
+    }
+
+    /**
+     * Finds tasks containing a keyword in their descriptions, ignoring case.
+     *
+     * @param keyword the text to search for
+     * @return matching tasks in their original order
+     */
+    public List<Task> find(String keyword) {
+        String normalizedKeyword = keyword.toLowerCase(Locale.ROOT);
+        List<Task> matchingTasks = new ArrayList<>();
+        for (Task task : tasks) {
+            if (task.getDescription().toLowerCase(Locale.ROOT).contains(normalizedKeyword)) {
+                matchingTasks.add(task);
+            }
+        }
+        return matchingTasks;
     }
 
     /**

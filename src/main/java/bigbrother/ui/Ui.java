@@ -91,6 +91,16 @@ public class Ui {
     }
 
     /**
+     * Displays the tasks that match a search keyword.
+     *
+     * @param matchingTasks matching tasks to display
+     */
+    public void showMatchingTasks(List<Task> matchingTasks) {
+        System.out.println("     Displaying matched tasks in your list:");
+        showNumberedTasks(matchingTasks);
+    }
+
+    /**
      * Displays tasks numbered according to their positions in the supplied list.
      *
      * @param tasks tasks to display
