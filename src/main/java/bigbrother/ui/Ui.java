@@ -52,7 +52,7 @@ public class Ui {
     public void showWelcome() {
         showLine();
         System.out.println(BANNER);
-        System.out.println("Hello! I'm BigBrother.");
+        System.out.println("Hello! I'm BigBrother watching your every move.");
         System.out.println("What can I do for you?");
         showLine();
     }
@@ -86,7 +86,16 @@ public class Ui {
      * @param tasks tasks to display
      */
     public void showTaskList(List<Task> tasks) {
-        System.out.println("     Here are the tasks in your list:");
+        System.out.println("     Displaying list of tasks:");
+        showNumberedTasks(tasks);
+    }
+
+    /**
+     * Displays tasks numbered according to their positions in the supplied list.
+     *
+     * @param tasks tasks to display
+     */
+    private void showNumberedTasks(List<Task> tasks) {
         for (int i = 0; i < tasks.size(); i++) {
             System.out.println("     " + (i + 1) + "." + tasks.get(i));
         }
@@ -119,7 +128,7 @@ public class Ui {
      * @param taskCount number of remaining tasks
      */
     public void showTaskDeleted(Task task, int taskCount) {
-        System.out.println("     Noted. I've removed this task:");
+        System.out.println("     Understood. I've removed this task:");
         System.out.println("       " + task);
         showTaskCount(taskCount);
     }
@@ -131,7 +140,7 @@ public class Ui {
      * @param taskCount number of current tasks
      */
     public void showTodoAdded(Task task, int taskCount) {
-        showTaskAdded("     Understood Creating Task:", task, taskCount);
+        showTaskAdded("     Understood, Creating Task:", task, taskCount);
     }
 
     /**
@@ -141,7 +150,7 @@ public class Ui {
      * @param taskCount number of current tasks
      */
     public void showDeadlineAdded(Task task, int taskCount) {
-        showTaskAdded("     Understood Creating Task with Deadline:", task, taskCount);
+        showTaskAdded("     Understood, Creating Task with Deadline:", task, taskCount);
     }
 
     /**
@@ -151,7 +160,7 @@ public class Ui {
      * @param taskCount number of current tasks
      */
     public void showEventAdded(Task task, int taskCount) {
-        showTaskAdded("     Understood Created Event task:", task, taskCount);
+        showTaskAdded("     Understood, Created Event task:", task, taskCount);
     }
 
     /**

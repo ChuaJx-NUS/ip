@@ -1,10 +1,10 @@
 # Console UI Test Plan
 
 This plan covers the user-visible task creation, modification, deletion,
-display, and persistence behavior of BigBrother. Inputs are sent one command
-per line. Expected output entries below are the important task-response lines
-from the console transcript; startup and separator lines are also captured and
-shown when the tests are run.
+display, and persistence behavior of BigBrother. Inputs are sent one
+command per line. Expected output entries below are the important task-response
+lines from the console transcript; startup and separator lines are also
+captured and shown when the tests are run.
 
 Unless a test states otherwise, run it from a fresh temporary working directory
 that does not contain a `data` folder. This keeps saved tasks from one test from
@@ -28,7 +28,7 @@ bye
 
 ```text
      ERROR!!! Invalid command. Try todo, deadline, event, list, mark, unmark, delete, or bye.
-     Here are the tasks in your list:
+     Displaying list of tasks:
 ```
 
 ## Test 2: Add a todo task
@@ -49,10 +49,10 @@ bye
 ### Expected output
 
 ```text
-     Understood Creating Task:
+     Understood, Creating Task:
        [T][ ] borrow book
      Now you have 1 tasks in the list.
-     Here are the tasks in your list:
+     Displaying list of tasks:
      1.[T][ ] borrow book
 ```
 
@@ -73,10 +73,10 @@ bye
 ### Expected output
 
 ```text
-     Understood Creating Task with Deadline:
+     Understood, Creating Task with Deadline:
        [D][ ] do homework (by: Friday)
      Now you have 1 tasks in the list.
-     Here are the tasks in your list:
+     Displaying list of tasks:
      1.[D][ ] do homework (by: Friday)
 ```
 
@@ -99,7 +99,7 @@ bye
 
 ```text
      ERROR!!! A deadline must use: deadline <description> /by <date or time>.
-     Here are the tasks in your list:
+     Displaying list of tasks:
 ```
 
 ## Test 5: Add an event task
@@ -120,10 +120,10 @@ bye
 ### Expected output
 
 ```text
-     Understood Created Event task:
+     Understood, Created Event task:
        [E][ ] project meeting (from: Mon 2pm to: 4pm)
      Now you have 1 tasks in the list.
-     Here are the tasks in your list:
+     Displaying list of tasks:
      1.[E][ ] project meeting (from: Mon 2pm to: 4pm)
 ```
 
@@ -146,7 +146,7 @@ bye
 
 ```text
      ERROR!!! An event must use: event <description> /from <start> /to <end>.
-     Here are the tasks in your list:
+     Displaying list of tasks:
 ```
 
 ## Test 7: Reject empty task descriptions
@@ -172,7 +172,7 @@ bye
      ERROR!!!      ERROR - Empty Todo task.
      ERROR!!! ERROR - Empty Deadline Task.
      ERROR!!! The description of an event cannot be empty.
-     Here are the tasks in your list:
+     Displaying list of tasks:
 ```
 
 ## Test 8: Reject missing deadline and event times
@@ -197,7 +197,7 @@ bye
      ERROR!!! A deadline must include a date or time after /by.
      ERROR!!! An event must include a start time after /from.
      ERROR!!! An event must include an end time after /to.
-     Here are the tasks in your list:
+     Displaying list of tasks:
 ```
 
 ## Test 9: Reject invalid task numbers
@@ -222,14 +222,14 @@ bye
 ### Expected output
 
 ```text
-     Understood Creating Task:
+     Understood, Creating Task:
        [T][ ] borrow book
      Now you have 1 tasks in the list.
      ERROR!!! Please provide a task number after mark.
      ERROR!!! The task number must be a whole number.
      ERROR!!! Task 0 does not exist. Choose a number from the list.
      ERROR!!! Task 2 does not exist. Choose a number from the list.
-     Here are the tasks in your list:
+     Displaying list of tasks:
      1.[T][ ] borrow book
 ```
 
@@ -252,7 +252,7 @@ bye
 ### Expected output
 
 ```text
-     Understood Created Event task:
+     Understood, Created Event task:
        [E][ ] project meeting (from: Mon 2pm to: 4pm)
      Now you have 1 tasks in the list.
      Nice! I've marked this task as done:
@@ -284,25 +284,25 @@ bye
 ### Expected output
 
 ```text
-     Understood Creating Task:
+     Understood, Creating Task:
        [T][ ] read book
      Now you have 1 tasks in the list.
-     Understood Creating Task with Deadline:
+     Understood, Creating Task with Deadline:
        [D][ ] return book (by: June 6th)
      Now you have 2 tasks in the list.
-     Understood Created Event task:
+     Understood, Created Event task:
        [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
      Now you have 3 tasks in the list.
-     Understood Creating Task:
+     Understood, Creating Task:
        [T][ ] join sports club
      Now you have 4 tasks in the list.
-     Understood Creating Task:
+     Understood, Creating Task:
        [T][ ] borrow book
      Now you have 5 tasks in the list.
-     Noted. I've removed this task:
+     Understood. I've removed this task:
        [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
      Now you have 4 tasks in the list.
-     Here are the tasks in your list:
+     Displaying list of tasks:
      1.[T][ ] read book
      2.[D][ ] return book (by: June 6th)
      3.[T][ ] join sports club
@@ -331,14 +331,14 @@ bye
 ### Expected output
 
 ```text
-     Understood Creating Task:
+     Understood, Creating Task:
        [T][ ] borrow book
      Now you have 1 tasks in the list.
      ERROR!!! Please provide a task number after delete.
      ERROR!!! The task number must be a whole number.
      ERROR!!! Task 0 does not exist. Choose a number from the list.
      ERROR!!! Task 2 does not exist. Choose a number from the list.
-     Here are the tasks in your list:
+     Displaying list of tasks:
      1.[T][ ] borrow book
 ```
 
@@ -363,13 +363,13 @@ bye
 ### First session expected output
 
 ```text
-     Understood Creating Task:
+     Understood, Creating Task:
        [T][ ] borrow book
      Now you have 1 tasks in the list.
-     Understood Creating Task with Deadline:
+     Understood, Creating Task with Deadline:
        [D][ ] return book (by: Friday)
      Now you have 2 tasks in the list.
-     Understood Created Event task:
+     Understood, Created Event task:
        [E][ ] project meeting (from: Mon 2pm to: 4pm)
      Now you have 3 tasks in the list.
      Nice! I've marked this task as done:
@@ -395,11 +395,11 @@ bye
 ### Second session expected output
 
 ```text
-     Here are the tasks in your list:
+     Displaying list of tasks:
      1.[T][ ] borrow book
      2.[D][X] return book (by: Friday)
      3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
-     Noted. I've removed this task:
+     Understood. I've removed this task:
        [T][ ] borrow book
      Now you have 2 tasks in the list.
 ```
@@ -414,7 +414,7 @@ bye
 ### Third session expected output
 
 ```text
-     Here are the tasks in your list:
+     Displaying list of tasks:
      1.[D][X] return book (by: Friday)
      2.[E][ ] project meeting (from: Mon 2pm to: 4pm)
 ```
@@ -442,5 +442,111 @@ bye
 
 ```text
      ERROR!!! The data file is corrupted at line 1. Starting with no tasks.
-     Here are the tasks in your list:
+     Displaying list of tasks:
+```
+
+## Test 15: Parse, display, and reload calendar deadlines
+
+### Aim
+
+Verify that ISO dates and optional 24-hour times are displayed in a different
+format, saved without losing their values, and reconstructed after a restart.
+Run both sessions from the same fresh temporary working directory.
+
+### First session input
+
+```text
+deadline submit report /by 2026-10-15
+deadline join call /by 2026-10-15 1800
+list
+bye
+```
+
+### First session expected output
+
+```text
+     Understood, Creating Task with Deadline:
+       [D][ ] submit report (by: Oct 15 2026)
+     Now you have 1 tasks in the list.
+     Understood, Creating Task with Deadline:
+       [D][ ] join call (by: Oct 15 2026 6:00 PM)
+     Now you have 2 tasks in the list.
+     Displaying list of tasks:
+     1.[D][ ] submit report (by: Oct 15 2026)
+     2.[D][ ] join call (by: Oct 15 2026 6:00 PM)
+```
+
+### Expected saved file
+
+```text
+D | 0 | submit report | 2026-10-15
+D | 0 | join call | 2026-10-15 1800
+```
+
+### Second session input
+
+```text
+list
+bye
+```
+
+### Second session expected output
+
+```text
+     Displaying list of tasks:
+     1.[D][ ] submit report (by: Oct 15 2026)
+     2.[D][ ] join call (by: Oct 15 2026 6:00 PM)
+```
+
+## Test 16: Reject invalid calendar dates and times
+
+### Aim
+
+Verify that invalid months, days, hours, and minutes produce errors that explain
+the allowed ranges without adding tasks.
+
+### Input
+
+```text
+deadline bad month /by 2026-13-10
+deadline bad day /by 2026-02-30
+deadline bad hour /by 2026-10-15 2460
+deadline bad minute /by 2026-10-15 2360
+list
+bye
+```
+
+### Expected output
+
+```text
+     ERROR!!! Use a valid yyyy-MM-dd date (month 01-12, day valid for that month) and optional HHmm time (hours 00-23, minutes 00-59).
+     ERROR!!! Use a valid yyyy-MM-dd date (month 01-12, day valid for that month) and optional HHmm time (hours 00-23, minutes 00-59).
+     ERROR!!! Use a valid yyyy-MM-dd date (month 01-12, day valid for that month) and optional HHmm time (hours 00-23, minutes 00-59).
+     ERROR!!! Use a valid yyyy-MM-dd date (month 01-12, day valid for that month) and optional HHmm time (hours 00-23, minutes 00-59).
+     Displaying list of tasks:
+```
+
+## Test 17: Handle an invalid saved calendar date
+
+### Aim
+
+Verify that an impossible ISO date in the saved file reports corruption
+instead of crashing. Before starting, create `data/bigbrother.txt` with:
+
+```text
+D | 0 | damaged deadline | 2026-02-30
+```
+
+### Input
+
+```text
+list
+bye
+```
+
+### Expected output
+
+```text
+     ERROR!!! The data file is corrupted at line 1. Starting with no tasks.
+     Displaying list of tasks:
 ```

@@ -36,15 +36,15 @@ public class Storage {
     }
 
     /**
-     * Loads tasks from the data file into the supplied task list.
+     * Loads tasks from the data file.
      *
-     * @param tasks the list that will receive the loaded tasks
+     * @return the loaded tasks, or an empty list when the file does not exist
      * @throws BigBrotherException if the file cannot be read or contains invalid data
      */
-    public void loadTasks(List<Task> tasks) throws BigBrotherException {
+    public List<Task> loadTasks() throws BigBrotherException {
         createDataDirectory();
         if (!Files.exists(filePath)) {
-            return;
+            return new ArrayList<>();
         }
 
         try {
@@ -57,7 +57,7 @@ public class Storage {
                 }
             }
 
-            tasks.addAll(loadedTasks);
+            return loadedTasks;
         } catch (IOException exception) {
             throw new BigBrotherException("Unable to read " + filePath + ".");
         }
@@ -160,7 +160,11 @@ public class Storage {
             if (fields.size() != 4 || fields.get(3).isEmpty()) {
                 throw corruptedDataException(lineNumber);
             }
-            task = new Deadline(description, fields.get(3));
+            try {
+                task = new Deadline(description, fields.get(3));
+            } catch (BigBrotherException exception) {
+                throw corruptedDataException(lineNumber);
+            }
             break;
         case TYPE_EVENT:
             if (fields.size() != 5 || fields.get(3).isEmpty() || fields.get(4).isEmpty()) {
